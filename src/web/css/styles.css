@@ -1,0 +1,34 @@
+.dvizh-cart-block .dropdown-menu {
+    min-width: 280px;
+    padding: 10px;
+}
+
+.dvizh-cart-block .dropdown-menu {
+    padding: 5px;
+}
+
+.dvizh-cart .dvizh-cart-delete-button {
+    padding: 4px;
+    margin: 1px;
+}
+
+.dvizh-cart ul {
+    list-style: none;
+    padding: 1px;
+    margin: 1px;
+}
+
+.dvizh-change-count input {
+    text-align: center;
+    width: 40px;
+}
+
+.dvizh-cart-show-options {
+    font-size: 80%;
+}
+
+.dvizh-cart-row {
+    margin-top: 3px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #ccc;
+}

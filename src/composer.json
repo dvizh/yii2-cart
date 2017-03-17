@@ -1,0 +1,35 @@
+{
+    "name": "dvizh/yii2-cart",
+    "description": "Cart module with widgets, can collect some application models, that implement right interface",
+    "keywords": ["yii2", "yii 2", "application", "cart", "shop", "module", "dvizh"],
+    "homepage": "https://github.com/dvizh/",
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "support": {
+        "source": "https://github.com/dvizh/yii2-cart"
+    },
+    "authors": [
+        {
+            "name": "Ilya Pistol",
+            "email": "dvizh@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "*",
+        "yiisoft/yii2-bootstrap": "*",
+        "dvizh/yii2-dvizh-dic": "*"
+    },
+    "config": {
+        "process-timeout": 1800
+    },
+    "autoload": {
+        "psr-4": {
+            "dvizh\\cart\\": "src/"
+        }
+    },
+    "extra": {
+        "bootstrap": "dvizh\\cart\\Bootstrap"
+    }
+}
