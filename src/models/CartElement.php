@@ -6,15 +6,6 @@ use yii;
 
 class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\entity\CartElement
 {
-    private $cartService;
-
-    public function init()
-    {
-        $this->cartService = yii::createObject('\dvizh\cart\services\Cart');
-
-        parent::init();
-    }
-
     public function getId()
     {
         return $this->id;
@@ -124,30 +115,6 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
     public function getBaseCost()
     {
         return $this->getPrice();
-    }
-
-    public function getCost()
-    {
-        $cost = 0;
-        $costProduct = $this->getPrice();
-
-        $cart = $this->cartService;
-        
-        for($i = 0; $i < $this->count; $i++) {
-            $currentCostProduct = $costProduct;
-
-            $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $currentCostProduct]);
-            $cart->trigger($cart::EVENT_ELEMENT_COST_CALCULATE, $elementEvent);
-            $currentCostProduct = $elementEvent->cost;
-
-            $cost = $cost+$currentCostProduct;
-        }
-        
-
-        $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $cost]);
-        $cart->trigger($cart::EVENT_ELEMENT_COST, $elementEvent);
-
-        return $elementEvent->cost;
     }
 
     public function getCart()
