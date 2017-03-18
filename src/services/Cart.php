@@ -54,8 +54,7 @@ class Cart extends \yii\base\Component implements \dvizh\dic\interfaces\services
 
     public function putElement(\dvizh\dic\interfaces\entity\SoldGoods $product, $count = 1, $price = null, $options = [])
     {
-        $elementModel = yii::createObject('\dvizh\cart\models\CartElement');
-
+        $elementModel = new \dvizh\cart\models\CartElement;
         $elementModel->setCount((int)$count);
         $elementModel->setPrice($product->getPrice());
         $elementModel->setItemId($product->getItemId());
