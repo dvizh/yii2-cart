@@ -13,13 +13,10 @@ class Cart extends \yii\base\Component implements \dvizh\dic\interfaces\services
     const EVENT_CART_COST = 'cart_cost';
     const EVENT_CART_COUNT = 'cart_count';
     const EVENT_CART_PUT = 'cart_put';
-    const EVENT_CART_UPDATE = 'cart_update';
-    const EVENT_CART_ROUNDING = 'cart_rounding';
+    const EVENT_CART_COST_ROUNDING = 'cart_rounding';
     const EVENT_MODELS_ROUNDING = 'cart_models_rounding';
     const EVENT_ELEMENT_COST = 'element_cost';
-    const EVENT_ELEMENT_PRICE = 'element_price';
     const EVENT_ELEMENT_ROUNDING = 'element_rounding';
-    const EVENT_ELEMENT_COST_CALCULATE = 'element_cost_calculate';
 
     public $currency = NULL;
     public $currencyPosition = 'after';
@@ -125,10 +122,18 @@ class Cart extends \yii\base\Component implements \dvizh\dic\interfaces\services
 
         foreach($elements as $element) {
             $price = $element->getCost();
+            
+            $elementEvent = new CartElementEvent(['element' => $element, 'cost' => $price]);
+            $cart->trigger(self::EVENT_ELEMENT_COST, $elementEvent);
+            
+            $elementEvent = new CartElementEvent(['element' => $element, 'cost' => $elementEvent->cost]);
+            $cart->trigger(self::EVENT_ELEMENT_ROUNDING, $elementEvent);
+
             if (!isset($pricesByModels[$element->model])) {
                 $pricesByModels[$element->model] = 0;
             }
-            $pricesByModels[$element->model] += $price;
+            
+            $pricesByModels[$element->model] += $elementEvent->cost;
         }
 
         $cost = 0;
@@ -141,7 +146,7 @@ class Cart extends \yii\base\Component implements \dvizh\dic\interfaces\services
         $cartEvent = new CartEvent(['cart' => $this->getByCurrentUser(), 'cost' => $cost]);
 
         $this->trigger(self::EVENT_CART_COST, $cartEvent);
-        $this->trigger(self::EVENT_CART_ROUNDING, $cartEvent);
+        $this->trigger(self::EVENT_CART_COST_ROUNDING, $cartEvent);
 
         return $cartEvent->cost;
     }
