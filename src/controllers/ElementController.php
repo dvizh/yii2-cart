@@ -7,6 +7,7 @@ use yii;
 
 class ElementController extends \yii\web\Controller
 {
+
     public function behaviors()
     {
         return [
@@ -43,28 +44,31 @@ class ElementController extends \yii\web\Controller
     {
         $json = ['result' => 'undefined', 'error' => false];
 
-        $cart = yii::$app->cart;
+        $cart = yii::createObject('\dvizh\cart\services\Cart');
 
         $postData = yii::$app->request->post();
 
         $model = $postData['CartElement']['model'];
         if($model) {
             $productModel = new $model();
-            $productModel = $productModel::findOne($postData['CartElement']['item_id']);
+            if($productModel = $productModel::getById($postData['CartElement']['item_id'])) {
+                $options = [];
+                if(isset($postData['CartElement']['options'])) {
+                    $options = $postData['CartElement']['options'];
+                }
 
-            $options = [];
-            if(isset($postData['CartElement']['options'])) {
-                $options = $postData['CartElement']['options'];
-            }
+                if($postData['CartElement']['price'] && $postData['CartElement']['price'] != 'false') {
+                    $elementModel = $cart->putElement($productModel, $postData['CartElement']['count'], $postData['CartElement']['price'], $options);
+                } else {
+                    $elementModel = $cart->putElement($productModel, $postData['CartElement']['count'], null, $options);
+                }
 
-            if($postData['CartElement']['price'] && $postData['CartElement']['price'] != 'false') {
-                $elementModel = $cart->putWithPrice($productModel, $postData['CartElement']['price'], $postData['CartElement']['count'], $options);
+                $json['elementId'] = $elementModel->getId();
+                $json['result'] = 'success';
             } else {
-                $elementModel = $cart->put($productModel, $postData['CartElement']['count'], $options);
+                $json['result'] = 'fail';
+                $json['error'] = 'none product';
             }
-
-            $json['elementId'] = $elementModel->getId();
-            $json['result'] = 'success';
         } else {
             $json['result'] = 'fail';
             $json['error'] = 'empty model';
@@ -77,7 +81,7 @@ class ElementController extends \yii\web\Controller
     {
         $json = ['result' => 'undefined', 'error' => false];
 
-        $cart = yii::$app->cart;
+        $cart = yii::createObject('\dvizh\cart\services\Cart');
         
         $postData = yii::$app->request->post();
 
@@ -99,15 +103,15 @@ class ElementController extends \yii\web\Controller
 
     private function _cartJson($json)
     {
-        if ($cartModel = yii::$app->cart) {
+        if ($cart = yii::createObject('\dvizh\cart\services\Cart')) {
             if(!$elementsListWidgetParams = yii::$app->request->post('elementsListWidgetParams')) {
                 $elementsListWidgetParams = [];
             }
 
             $json['elementsHTML'] = \dvizh\cart\widgets\ElementsList::widget($elementsListWidgetParams);
-            $json['count'] = $cartModel->getCount();
-            $json['clear_price'] = $cartModel->getCount(false);
-            $json['price'] = $cartModel->getCostFormatted();
+            $json['count'] = $cart->getCount();
+            $json['clear_price'] = $cart->getCount();
+            $json['price'] = $cart->getCostFormatted();
         } else {
             $json['count'] = 0;
             $json['price'] = 0;

@@ -31,6 +31,13 @@ class ElementsList extends \yii\base\Widget
     public $elementView = 'elementListRow';
     public $controllerActions = ['update' => '/cart/element/update','delete' => '/cart/element/delete'];
 
+    public function __construct(\dvizh\dic\interfaces\services\Cart $cart, $config = [])
+    {
+        $this->cart = $cart;
+
+        parent::__construct($config);
+    }
+
     public function init()
     {
         $paramsArr = [
@@ -67,20 +74,16 @@ class ElementsList extends \yii\base\Widget
             $this->offerUrl = Url::toRoute(['/cart/default/index']);
         }
 
-        if ($this->cart == NULL) {
-            $this->cart = yii::$app->cart;
-        }
-
         if ($this->textButton == NULL) {
             $this->textButton = yii::t('cart', 'Cart (<span class="dvizh-cart-price">{p}</span>)', ['c' => $this->cart->getCount(), 'p' => $this->cart->getCostFormatted()]);
         }
 
         if ($this->currency == NULL) {
-            $this->currency = yii::$app->cart->currency;
+            $this->currency = $this->cart->currency;
         }
 
         if ($this->currencyPosition == NULL) {
-            $this->currencyPosition = yii::$app->cart->currencyPosition;
+            $this->currencyPosition = $this->cart->getCurrencyPosition();
         }
 
         \dvizh\cart\assets\WidgetAsset::register($this->getView());
@@ -104,7 +107,7 @@ class ElementsList extends \yii\base\Widget
             $bottomPanel = '';
 
             if ($this->showTotal) {
-                $bottomPanel .= Html::tag('div', Yii::t('cart', 'Total') . ': ' . yii::$app->cart->cost . ' '.yii::$app->cart->currency, ['class' => 'dvizh-cart-total-row']);
+                $bottomPanel .= Html::tag('div', Yii::t('cart', 'Total') . ': ' . $this->cart->cost . ' '.$this->cart->currency, ['class' => 'dvizh-cart-total-row']);
             }
 
             if($this->offerUrl && $this->showOffer) {
@@ -140,7 +143,7 @@ class ElementsList extends \yii\base\Widget
             $options = $item->getOptions();
         }
 
-        $product = $item->getModel();
+        $product = $item->getProduct();
         $allOptions = $product->getOptions();
         $cartElName = $product->getName();
 
@@ -154,46 +157,6 @@ class ElementsList extends \yii\base\Widget
             'otherFields' => $this->otherFields,
             'controllerActions' => $this->controllerActions,
         ]);
-
-        // TODO выпилить
-        /*
-        $columns = [];
-
-        if($this->showOptions && $item->getOptions()) {
-            $options = '';
-            foreach($item->getOptions() as $optionId => $valueId) {
-                if($optionData = $allOptions[$optionId]) {
-                    $option = $optionData['name'];
-
-                    $value = $optionData['variants'][$valueId];
-
-                    $options .= Html::tag('div', Html::tag('strong', $option) . ':' . $value);
-                }
-            }
-
-            $cartElName .= Html::tag('div', $options, ['class' => 'dvizh-cart-show-options']);
-        }
-
-        if(!empty($this->otherFields)) {
-            foreach($this->otherFields as $fieldName => $field) {
-                $cartElName .= Html::tag('p', Html::tag('small', $fieldName.': '.$product->$field));
-            }
-        }
-
-        if($this->columns == 4) {
-            $columns[] = Html::tag('div', $cartElName, ['class' => 'col-lg-6 col-md-6 col-xs-6']);
-            $columns[] = Html::tag('div', ChangeCount::widget(['model' => $item, 'showArrows' => $this->showCountArrows]), ['class' => 'col-lg-3 col-xs-3']);
-            $columns[] = Html::tag('div', $this->_getCostFormatted($item->getCost(false)), ['class' => 'col-lg-2 col-xs-2']);
-        } else {
-            $columns[] = Html::tag('div', $cartElName, ['class' => 'col-lg-8 col-md-8 col-xs-8']);
-            $columns[] = Html::tag('div', $this->_getCostFormatted($item->getCost(false)).ChangeCount::widget(['model' => $item, 'showArrows' => $this->showCountArrows]), ['class' => 'col-lg-3 col-md-3 col-xs-3']);
-        }
-
-        $columns[] = Html::tag('div', DeleteButton::widget(['model' => $item, 'lineSelector' => 'dvizh-cart-row ', 'cssClass' => 'delete']), ['class' => 'shop-cart-delete col-lg-1 col-md-1 col-xs-1']);
-
-        $return = html::tag('div', implode('', $columns), ['class' => ' row']);
-        return Html::tag('li', $return, ['class' => 'dvizh-cart-row ']);
-        */
     }
 
     private function _getCostFormatted($cost)

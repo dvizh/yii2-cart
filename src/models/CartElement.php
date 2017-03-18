@@ -2,17 +2,37 @@
 namespace dvizh\cart\models;
 
 use dvizh\cart\events\CartElement as CartElementEvent;
-use dvizh\cart\events\Cart as CartEvent;
 use yii;
 
-class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\cart\CartElement
+class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\entity\CartElement
 {
-    const EVENT_ELEMENT_UPDATE = 'element_count';
-    const EVENT_ELEMENT_DELETE = 'element_delete';
+    private $cartService;
+
+    public function init()
+    {
+        $this->cartService = yii::createObject('\dvizh\cart\services\Cart');
+
+        parent::init();
+    }
 
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getItemId()
+    {
+        return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
     }
 
     public function getCount()
@@ -20,50 +40,43 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
         return $this->count;
     }
 
-    public function getName()
-    {
-        return $this->getModel()->getName();
-    }
-    
-    public function getItemId()
-    {
-        return $this->item_id;
-    }
-
-    public function getModel($withCartElementModel = true)
-    {
-        if(!$withCartElementModel) {
-            return $this->model;
-        }
-
-        $model = '\\'.$this->model;
-        if(is_string($this->model) && class_exists($this->model)) {
-            $productModel = new $model();
-            if ($productModel = $productModel::findOne($this->item_id)) {
-                $model = $productModel;
-            } else {
-                yii::$app->cart->truncate();
-                throw new \yii\base\Exception('Element model not found');
-            }
-        } else {
-            throw new \yii\base\Exception('Unknow element model');
-        }
-
-        return $model;
-    }
-    
     public function getModelName()
     {
         return $this->model;
     }
 
-    public function getOptions()
+    public function getOptions(): array
     {
-        if(empty($this->options)) {
-            return [];
+        if ($this->options) {
+            return json_encode($this->options);
         }
 
-        return json_decode($this->options, true);
+        return [];
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function getHash()
+    {
+        return $this->hash;
+    }
+
+    public function setCart(\dvizh\dic\interfaces\entity\Cart $cart)
+    {
+        $this->link('cart', $cart);
+    }
+
+    public function setModelName($modelName)
+    {
+        $this->model = $modelName;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     public function setItemId($itemId)
@@ -71,48 +84,9 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
         $this->item_id = $itemId;
     }
 
-    public function setCount($count, $andSave = false)
+    public function setCount($count)
     {
         $this->count = $count;
-
-        if($andSave) {
-            if ($this->save()) {
-                $elementEvent = new CartEvent([
-                    'cart' => yii::$app->cart->getElements(),
-                    'cost' => yii::$app->cart->getCost(),
-                    'count' => yii::$app->cart->getCount(),
-                ]);
-
-                $cartComponent = yii::$app->cart;
-                $cartComponent->trigger($cartComponent::EVENT_CART_UPDATE, $elementEvent);
-            }
-        }
-    }
-
-    public function countIncrement($count)
-    {
-        $this->count = $this->count+$count;
-
-        return $this->save();
-    }
-
-    public function getPrice($withTriggers = true)
-    {
-        $price = $this->price;
-
-        $cart = yii::$app->cart;
-
-        if($withTriggers) {
-            $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $price]);
-            $cart->trigger($cart::EVENT_ELEMENT_PRICE, $elementEvent);
-            $price = $elementEvent->cost;
-        }
-
-        $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $price]);
-        $cart->trigger($cart::EVENT_ELEMENT_ROUNDING, $elementEvent);
-        $price = $elementEvent->cost;
-
-        return $price;
     }
 
     public function setPrice($price)
@@ -120,22 +94,26 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
         $this->price = $price;
     }
 
-    public function setModel($model)
+    public function setOptions($options)
     {
-        $this->model = $model;
+        if ($options) {
+            $this->options = json_encode($options);
+        }
     }
 
-    public function setOptions($options, $andSave = false)
+    public function setHash($hash)
     {
-        if(is_array($options)) {
-            $this->options = json_encode($options);
-        } else {
-            $this->options = $options;
-        }
+        $this->hash = $hash;
+    }
 
-        if($andSave) {
-            $this->save();
-        }
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    public function saveData()
+    {
+        return $this->save();
     }
 
     public static function tableName()
@@ -143,29 +121,33 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
         return '{{%cart_element}}';
     }
 
-    public function getCost($withTriggers = true)
+    public function getBaseCost()
+    {
+        return $this->getPrice();
+    }
+
+    public function getCost()
     {
         $cost = 0;
-        $costProduct = $this->getPrice($withTriggers);
-        $cart = \Yii::$app->cart;
+        $costProduct = $this->getPrice();
+
+        $cart = $this->cartService;
         
         for($i = 0; $i < $this->count; $i++) {
             $currentCostProduct = $costProduct;
-            if($withTriggers) {
-                $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $currentCostProduct]);
-                $cart->trigger($cart::EVENT_ELEMENT_COST_CALCULATE, $elementEvent);
-                $currentCostProduct = $elementEvent->cost;
-            }
+
+            $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $currentCostProduct]);
+            $cart->trigger($cart::EVENT_ELEMENT_COST_CALCULATE, $elementEvent);
+            $currentCostProduct = $elementEvent->cost;
+
             $cost = $cost+$currentCostProduct;
         }
         
-        if($withTriggers) {
-            $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $cost]);
-            $cart->trigger($cart::EVENT_ELEMENT_COST, $elementEvent);
-            $cost = $elementEvent->cost;
-        }
-	    
-        return $cost;
+
+        $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $cost]);
+        $cart->trigger($cart::EVENT_ELEMENT_COST, $elementEvent);
+
+        return $elementEvent->cost;
     }
 
     public function getCart()
@@ -189,7 +171,7 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
         $model = $this->model;
         if (class_exists($model)) {
             $elementModel = new $model();
-            if (!$elementModel instanceof \dvizh\dic\interfaces\cart\CartElement) {
+            if (!$elementModel instanceof \dvizh\dic\interfaces\entity\SoldGoods) {
                 $this->addError($attribute, 'Model implement error');
             }
         } else {
@@ -208,37 +190,15 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
             'cart_id' => yii::t('cart', 'Cart ID'),
             'item_id' => yii::t('cart', 'Item ID'),
             'count' => yii::t('cart', 'Count'),
+            'options' => yii::t('cart', 'Options')
         ];
     }
 
-    public function beforeSave($insert)
+    public function getProduct() : \dvizh\dic\interfaces\entity\SoldGoods
     {
-        $cart = yii::$app->cart;
+        $modelStr = $this->model;
+        $productModel = new $modelStr();
 
-        $cart->cart->updated_time = time();
-        $cart->cart->save();
-
-        $elementEvent = new CartElementEvent(['element' => $this]);
-
-        $this->trigger(self::EVENT_ELEMENT_UPDATE, $elementEvent);
-
-        if($elementEvent->stop) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public function beforeDelete()
-    {
-        $elementEvent = new CartElementEvent(['element' => $this]);
-
-        $this->trigger(self::EVENT_ELEMENT_DELETE, $elementEvent);
-
-        if($elementEvent->stop) {
-            return false;
-        } else {
-            return true;
-        }
+        return $this->hasOne($productModel::className(), ['id' => 'item_id'])->one();
     }
 }

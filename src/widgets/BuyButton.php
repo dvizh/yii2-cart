@@ -40,15 +40,15 @@ class BuyButton extends \yii\base\Widget
 
     public function run()
     {
-        if (!is_object($this->model) | !$this->model instanceof \dvizh\dic\interfaces\cart\CartElement) {
+        if (!is_object($this->model) | !$this->model instanceof \dvizh\dic\interfaces\entity\SoldGoods) {
             return false;
         }
 
         $model = $this->model;
         return Html::tag($this->htmlTag, $this->text, [
             'href' => Url::toRoute($this->addElementUrl),
-            'class' => "dvizh-cart-buy-button dvizh-cart-buy-button{$this->model->getId()} {$this->cssClass}",
-            'data-id' => $model->getId(),
+            'class' => "dvizh-cart-buy-button dvizh-cart-buy-button{$this->model->getItemId()} {$this->cssClass}",
+            'data-id' => $model->getItemId(),
             'data-url' => Url::toRoute($this->addElementUrl),
             'data-role' => 'cart-buy-button',
             'data-count' => $this->count,

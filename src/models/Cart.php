@@ -3,65 +3,28 @@ namespace dvizh\cart\models;
 
 use yii;
 
-class Cart extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\cart\Cart
+class Cart extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\entity\Cart
 {
-    public function my()
+    public function getElements()
+    {
+        return $this->hasMany(CartElement::className(), ['cart_id' => 'id']);
+    }
+
+    public function setUpdateTime($time)
+    {
+        $this->updated_time = $time;
+    }
+
+    public function saveData()
+    {
+        return $this->save();
+    }
+
+    public static function my()
     {
         $query = new tools\CartQuery(get_called_class());
 
         return $query->my();
-    }
-
-    public function put(\dvizh\dic\interfaces\cart\CartElement $elementModel)
-    {
-        $elementModel->hash = self::_generateHash($elementModel->model, $elementModel->price, $elementModel->getOptions());
-
-        $elementModel->link('cart', $this->my());
-
-        if ($elementModel->validate() && $elementModel->save()) {
-            return $elementModel;
-        } else {
-            throw new \Exception(current($elementModel->getFirstErrors()));
-        }
-    }
-    
-    public function getElements()
-    {
-        return $this->my()->hasMany(CartElement::className(), ['cart_id' => 'id']);
-    }
-    
-    public function hasElement(\dvizh\dic\interfaces\cart\CartElement $model, $options = [])
-    {
-        return $this->getElements()->where(['hash' => $this->_generateHash(get_class($model), $model->getPrice(), $options), 'item_id' => $model->getId()])->one();
-    }
-    
-    public function getElementsByModel($model)
-    {
-        return $this->getElements()->andWhere(['model' => get_class($model), 'item_id' => $model->getId()])->all();
-    }
-    
-    public function getElementById($id)
-    {
-        return $this->getElements()->andWhere(['id' => $id])->one();
-    }
-    
-    public function getCount()
-    {
-        return intval($this->getElements()->sum('count'));
-    }
-    
-    public function getCost()
-    {
-        return $cost = $this->getElements()->sum('price*count');
-    }
-    
-    public function truncate()
-    {
-        foreach($this->elements as $element) {
-            $element->delete();
-        }
-        
-        return $this;
     }
 
     public function rules()
@@ -94,10 +57,5 @@ class Cart extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\cart\Ca
         }
         
         return true;
-    }
-    
-    private static function _generateHash($modelName, $price, $options = [])
-    {
-        return md5($modelName.$price.serialize($options));
     }
 }

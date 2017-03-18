@@ -14,6 +14,15 @@ class CartInformer extends \yii\base\Widget
     public $htmlTag = 'span';
 	public $showOldPrice = true;
 
+	private $cart;
+
+	public function __construct(\dvizh\dic\interfaces\services\Cart $cart, $config = [])
+    {
+        $this->cart = $cart;
+
+        parent::__construct($config);
+    }
+
     public function init()
     {
         parent::init();
@@ -33,9 +42,9 @@ class CartInformer extends \yii\base\Widget
 
     public function run()
     {
-        $cart = yii::$app->cart;
+        $cart = $this->cart;
 
-        if($this->showOldPrice == false | $cart->cost == $cart->getCost(false)) {
+        if($this->showOldPrice == false | $cart->cost == $cart->getBaseCost()) {
             $this->text = str_replace(['{c}', '{p}'],
                 ['<span class="dvizh-cart-count">'.$cart->getCount().'</span>', '<strong class="dvizh-cart-price">'.$cart->getCostFormatted().'</strong>'],
                 $this->text

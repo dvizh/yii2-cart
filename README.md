@@ -38,7 +38,7 @@ php yii migrate --migrationPath=vendor/dvizh/yii2-cart/migrations
 ```php
     'components' => [
         'cart' => [
-            'class' => 'dvizh\cart\Cart',
+            'class' => 'dvizh\cart\services\Cart',
             'currency' => 'р.', //Валюта
             'currencyPosition' => 'after', //after или before (позиция значка валюты относительно цены)
             'priceFormat' => [2,'.', ''], //Форма цены
