@@ -22,7 +22,7 @@ class DefaultController extends \yii\web\Controller
 
     public function actionIndex()
     {
-        $elements = yii::$app->cart->elements;
+        $elements = yii::createObject('\dvizh\cart\services\UserCart')->elements;
 
         return $this->render('index', [
             'elements' => $elements,
@@ -33,13 +33,13 @@ class DefaultController extends \yii\web\Controller
     {
         $json = ['result' => 'undefined', 'error' => false];
 
-        $cartModel = yii::$app->cart;
+        $cart = yii::createObject('\dvizh\cart\services\UserCart');
         
-        if ($cartModel->truncate()) {
+        if ($cart->truncate()) {
             $json['result'] = 'success';
         } else {
             $json['result'] = 'fail';
-            $json['error'] = $cartModel->getCart()->getErrors();
+            $json['error'] = '';
         }
 
         return $this->_cartJson($json);
@@ -51,10 +51,10 @@ class DefaultController extends \yii\web\Controller
     
     private function _cartJson($json)
     {
-        if ($cartModel = yii::$app->cart) {
+        if ($cart = yii::createObject('\dvizh\cart\services\UserCart')) {
             $json['elementsHTML'] = \dvizh\cart\widgets\ElementsList::widget();
-            $json['count'] = $cartModel->getCount();
-            $json['price'] = $cartModel->getCostFormatted();
+            $json['count'] = $cart->getCount();
+            $json['price'] = $cart->getCost();
         } else {
             $json['count'] = 0;
             $json['price'] = 0;

@@ -16,7 +16,7 @@ class CartInformer extends \yii\base\Widget
 
 	private $cart;
 
-	public function __construct(\dvizh\dic\interfaces\services\Cart $cart, $config = [])
+	public function __construct(\dvizh\app\interfaces\services\singletons\UserCart $cart, $config = [])
     {
         $this->cart = $cart;
 
@@ -44,17 +44,10 @@ class CartInformer extends \yii\base\Widget
     {
         $cart = $this->cart;
 
-        if($this->showOldPrice == false | $cart->cost == $cart->getBaseCost()) {
-            $this->text = str_replace(['{c}', '{p}'],
-                ['<span class="dvizh-cart-count">'.$cart->getCount().'</span>', '<strong class="dvizh-cart-price">'.$cart->getCostFormatted().'</strong>'],
-                $this->text
-            );
-        } else {
-            $this->text = str_replace(['{c}', '{p}'],
-                ['<span class="dvizh-cart-count">'.$cart->getCount().'</span>', '<strong class="dvizh-cart-price"><s>'.round($cart->getCost(false)).'</s>'.$cart->getCostFormatted().'</strong>'],
-                $this->text
-            );
-        }
+        $this->text = str_replace(['{c}', '{p}'],
+            ['<span class="dvizh-cart-count">'.$cart->getCount().'</span>', '<strong class="dvizh-cart-price">'.$cart->getCost().'</strong>'],
+            $this->text
+        );
         
         return Html::tag($this->htmlTag, $this->text, [
                 'href' => $this->offerUrl,

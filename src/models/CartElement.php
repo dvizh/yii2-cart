@@ -4,14 +4,10 @@ namespace dvizh\cart\models;
 use dvizh\cart\events\CartElement as CartElementEvent;
 use yii;
 
-class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\entity\CartElement
+class CartElement extends \yii\db\ActiveRecord implements \dvizh\app\interfaces\entities\CartElement
 {
-    private $cartService;
-
     public function init()
     {
-        $this->cartService = yii::createObject('\dvizh\cart\services\Cart');
-
         parent::init();
     }
 
@@ -64,7 +60,7 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
         return $this->hash;
     }
 
-    public function setCart(\dvizh\dic\interfaces\entity\Cart $cart)
+    public function setCart(\dvizh\app\interfaces\entities\Cart $cart)
     {
         $this->link('cart', $cart);
     }
@@ -82,6 +78,11 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
     public function setItemId($itemId)
     {
         $this->item_id = $itemId;
+    }
+
+    public function setProduct(\dvizh\app\interfaces\entities\Goods $goods)
+    {
+        $this->setItemId($goods->getId());
     }
 
     public function setCount($count)
@@ -128,26 +129,7 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
 
     public function getCost()
     {
-        $cost = 0;
-        $costProduct = $this->getPrice();
-
-        $cart = $this->cartService;
-        
-        for($i = 0; $i < $this->count; $i++) {
-            $currentCostProduct = $costProduct;
-
-            $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $currentCostProduct]);
-            $cart->trigger($cart::EVENT_ELEMENT_COST_CALCULATE, $elementEvent);
-            $currentCostProduct = $elementEvent->cost;
-
-            $cost = $cost+$currentCostProduct;
-        }
-        
-
-        $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $cost]);
-        $cart->trigger($cart::EVENT_ELEMENT_COST, $elementEvent);
-
-        return $elementEvent->cost;
+        return $this->getPrice();
     }
 
     public function getCart()
@@ -171,7 +153,7 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
         $model = $this->model;
         if (class_exists($model)) {
             $elementModel = new $model();
-            if (!$elementModel instanceof \dvizh\dic\interfaces\entity\SoldGoods) {
+            if (!$elementModel instanceof \dvizh\app\interfaces\entities\Goods) {
                 $this->addError($attribute, 'Model implement error');
             }
         } else {
@@ -194,11 +176,16 @@ class CartElement extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\
         ];
     }
 
-    public function getProduct() : \dvizh\dic\interfaces\entity\SoldGoods
+    public function getProduct() : \dvizh\app\interfaces\entities\Goods
     {
         $modelStr = $this->model;
         $productModel = new $modelStr();
 
         return $this->hasOne($productModel::className(), ['id' => 'item_id'])->one();
+    }
+
+    public function remove()
+    {
+        return $this->delete();
     }
 }

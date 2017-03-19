@@ -32,23 +32,15 @@ class ChangeCount extends \yii\base\Widget
         } else {
             $downArr = $upArr = '';
         }
-        
-        if(!$this->model instanceof \dvizh\dic\interfaces\entity\CartElement) {
-            $input = Html::activeTextInput($this->model, 'count', [
-                'type' => 'number',
-                'class' => 'dvizh-cart-element-count',
-                'data-role' => 'cart-element-count',
-                'data-line-selector' => $this->lineSelector,
-                'data-id' => $this->model->getItemId(),
-                'data-href' => Url::toRoute($this->actionUpdateUrl),
-            ]);
-        } else {
-            $input = Html::input('number', 'count', $this->defaultValue, [
-                'class' => 'dvizh-cart-element-before-count',
-                'data-line-selector' => $this->lineSelector,
-                'data-id' => $this->model->getItemId(),
-            ]);
-        }
+
+        $input = Html::activeTextInput($this->model, 'count', [
+            'type' => 'number',
+            'class' => 'dvizh-cart-element-count',
+            'data-role' => 'cart-element-count',
+            'data-line-selector' => $this->lineSelector,
+            'data-id' => $this->model->getItemId(),
+            'data-href' => Url::toRoute($this->actionUpdateUrl),
+        ]);
         
         return Html::tag('div', $downArr.$input.$upArr, ['class' => $this->cssClass]);
     }

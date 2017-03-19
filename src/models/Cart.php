@@ -3,11 +3,16 @@ namespace dvizh\cart\models;
 
 use yii;
 
-class Cart extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\entity\Cart
+class Cart extends \yii\db\ActiveRecord implements \dvizh\app\interfaces\entities\Cart
 {
     public function getElements()
     {
         return $this->hasMany(CartElement::className(), ['cart_id' => 'id']);
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function setUpdateTime($time)
@@ -56,6 +61,15 @@ class Cart extends \yii\db\ActiveRecord implements \dvizh\dic\interfaces\entity\
             $elem->delete();
         }
         
+        return true;
+    }
+
+    public function truncate()
+    {
+        foreach ($this->elements as $elem) {
+            $elem->delete();
+        }
+
         return true;
     }
 }

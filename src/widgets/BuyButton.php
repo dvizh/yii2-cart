@@ -40,7 +40,7 @@ class BuyButton extends \yii\base\Widget
 
     public function run()
     {
-        if (!is_object($this->model) | !$this->model instanceof \dvizh\dic\interfaces\entity\SoldGoods) {
+        if (!is_object($this->model) | !$this->model instanceof \dvizh\app\interfaces\entities\Goods) {
             return false;
         }
 

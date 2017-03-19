@@ -16,10 +16,10 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=7.1",
         "yiisoft/yii2": "*",
         "yiisoft/yii2-bootstrap": "*",
-        "dvizh/yii2-dvizh-dic": "*"
+        "dvizh/yii2-bootstrap": "*"
     },
     "config": {
         "process-timeout": 1800

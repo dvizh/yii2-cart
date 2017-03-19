@@ -30,7 +30,7 @@ class ChangeOptions extends \yii\base\Widget
 
     public function run()
     {
-        if ($this->model instanceof \dvizh\dic\interfaces\entity\SoldGoods) {
+        if ($this->model instanceof \dvizh\app\interfaces\entities\Goods) {
             $optionsList = $this->model->getOptions();
             $changerCssClass = 'dvizh-option-values-before';
             $id = $this->model->getItemId();

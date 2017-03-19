@@ -1,10 +1,6 @@
 <?php
 namespace dvizh\cart\widgets;
 
-use dvizh\cart\widgets\DeleteButton;
-use dvizh\cart\widgets\TruncateButton;
-use dvizh\cart\widgets\ChangeCount;
-use dvizh\cart\widgets\CartInformer;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii;
@@ -25,13 +21,13 @@ class ElementsList extends \yii\base\Widget
     public $showTruncate = false;
     public $currency = null;
     public $otherFields = [];
-    public $currencyPosition = null;
+    public $currencyPosition = 'after';
     public $showCountArrows = true;
     public $columns = 4;
     public $elementView = 'elementListRow';
     public $controllerActions = ['update' => '/cart/element/update','delete' => '/cart/element/delete'];
 
-    public function __construct(\dvizh\dic\interfaces\services\Cart $cart, $config = [])
+    public function __construct(\dvizh\app\interfaces\services\singletons\UserCart $cart, $config = [])
     {
         $this->cart = $cart;
 
@@ -75,15 +71,7 @@ class ElementsList extends \yii\base\Widget
         }
 
         if ($this->textButton == NULL) {
-            $this->textButton = yii::t('cart', 'Cart (<span class="dvizh-cart-price">{p}</span>)', ['c' => $this->cart->getCount(), 'p' => $this->cart->getCostFormatted()]);
-        }
-
-        if ($this->currency == NULL) {
-            $this->currency = $this->cart->currency;
-        }
-
-        if ($this->currencyPosition == NULL) {
-            $this->currencyPosition = $this->cart->getCurrencyPosition();
+            $this->textButton = yii::t('cart', 'Cart (<span class="dvizh-cart-price">{p}</span>)', ['c' => $this->cart->getCount(), 'p' => $this->cart->getCost()]);
         }
 
         \dvizh\cart\assets\WidgetAsset::register($this->getView());
@@ -152,14 +140,14 @@ class ElementsList extends \yii\base\Widget
             'model' => $item,
             'name' => $cartElName,
             'showCountArrows' => $this->showCountArrows,
-            'cost' => $this->_getCostFormatted($item->getCost(false)),
+            'cost' => $this->_getCost($item->getCost(false)),
             'options' => $options,
             'otherFields' => $this->otherFields,
             'controllerActions' => $this->controllerActions,
         ]);
     }
 
-    private function _getCostFormatted($cost)
+    private function _getCost($cost)
     {
         if ($this->currencyPosition == 'after') {
             return "$cost{$this->currency}";
