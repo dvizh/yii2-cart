@@ -1,16 +1,10 @@
 <?php
 namespace dvizh\cart\models;
 
-use dvizh\cart\events\CartElement as CartElementEvent;
 use yii;
 
 class CartElement extends \yii\db\ActiveRecord implements \dvizh\app\interfaces\entities\CartElement
 {
-    public function init()
-    {
-        parent::init();
-    }
-
     public function getId()
     {
         return $this->id;
