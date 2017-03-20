@@ -86,9 +86,10 @@ class ElementController extends \yii\web\Controller
         $postData = yii::$app->request->post();
 
         $elementModel = $cart->getElementById($postData['CartElement']['id']);
-        
+
         if(isset($postData['CartElement']['count'])) {
-            $elementModel->setCount($postData['CartElement']['count'], true);
+            $elementModel->setCount($postData['CartElement']['count']);
+            $elementModel->saveData();
         }
         
         if(isset($postData['CartElement']['options'])) {

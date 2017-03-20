@@ -100,7 +100,7 @@ class UserCart extends \yii\base\Component implements \dvizh\app\interfaces\serv
 
         $cost = 0;
         foreach($this->elements as $element) {
-            $cost += $element->getCost();
+            $cost += ($element->getCost()*$element->getCount());
         }
 
         return $cost;
