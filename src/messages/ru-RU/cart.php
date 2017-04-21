@@ -22,7 +22,7 @@ return [
     'Total' => 'Итого',
     'Cart (<span class="dvizh-cart-price">{p}</span>)' => 'Корзина (<span class="dvizh-cart-price">{p}</span>)',
     'Offer' => 'Оформление',
-    'Your cart is empty' => 'Ваша корзина пуста',
+    'Your cart empty' => 'Ваша корзина пуста',
     'Offer' => 'Оформить',
     'Cart' => 'Корзина',
     'Code' => 'Артикул',

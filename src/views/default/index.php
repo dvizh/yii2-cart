@@ -13,7 +13,7 @@ $this->title = yii::t('cart', 'Cart');
     <?php foreach($elements as $element) { ?>
         <div class="row">
             <div class="col-lg-6 col-xs-6">
-                <strong><?=$element->getModel()->getName();?> (<?=$element->getModel()->getPrice();?> р.)</strong>
+                <strong><?=$element->getModel()->getCartName();?> (<?=$element->getModel()->getCartPrice();?> р.)</strong>
                 <?=ChangeOptions::widget(['model' => $element, 'type' => 'radio']); ?>
             </div>
             <div class="col-lg-4 col-xs-4">

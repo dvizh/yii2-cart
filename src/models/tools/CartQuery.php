@@ -20,14 +20,13 @@ class CartQuery extends \yii\db\ActiveQuery
         $one = $this->andWhere(['user_id' => $userId])->one();
         
         if (!$one) {
-            $one = yii::createObject('\dvizh\cart\models\Cart');
-            
+            $one = new \dvizh\cart\models\Cart;
             $one->created_time = time();
             $one->updated_time = time();
             $one->user_id = $userId;
             $one->save();
         }
-
+        
         return $one;
     }
 }

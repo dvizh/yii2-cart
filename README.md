@@ -29,7 +29,7 @@ php composer update
 Далее, мигрируем базу:
 
 ```
-php yii migrate --migrationPath=vendor/dvizh/yii2-cart/src/migrations
+php yii migrate --migrationPath=vendor/dvizh/yii2-cart/migrations
 ```
 
 Подключение и настройка
@@ -38,7 +38,7 @@ php yii migrate --migrationPath=vendor/dvizh/yii2-cart/src/migrations
 ```php
     'components' => [
         'cart' => [
-            'class' => 'dvizh\cart\services\Cart',
+            'class' => 'dvizh\cart\Cart',
             'currency' => 'р.', //Валюта
             'currencyPosition' => 'after', //after или before (позиция значка валюты относительно цены)
             'priceFormat' => [2,'.', ''], //Форма цены

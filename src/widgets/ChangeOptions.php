@@ -30,14 +30,14 @@ class ChangeOptions extends \yii\base\Widget
 
     public function run()
     {
-        if ($this->model instanceof \dvizh\app\interfaces\entities\Goods) {
-            $optionsList = $this->model->getOptions();
+        if ($this->model instanceof \dvizh\cart\interfaces\CartElement) {
+            $optionsList = $this->model->getCartOptions();
             $changerCssClass = 'dvizh-option-values-before';
-            $id = $this->model->getItemId();
+            $id = $this->model->getCartId();
         } else {
-            $optionsList = $this->model->getProduct()->getOptions();
+            $optionsList = $this->model->getModel()->getCartOptions();
             $this->defaultValues = $this->model->getOptions();
-            $id = $this->model->getItemId();
+            $id = $this->model->getId();
             $changerCssClass = 'dvizh-option-values';
         }
 

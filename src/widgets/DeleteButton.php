@@ -33,7 +33,7 @@ class DeleteButton extends \yii\base\Widget
                 'data-role' => 'cart-delete-button',
                 'data-line-selector' => $this->lineSelector,
                 'class' => 'dvizh-cart-delete-button ' . $this->cssClass,
-                'data-id' => $this->model->getItemId()
+                'data-id' => $this->model->getId()
             ]);
     }
 }
