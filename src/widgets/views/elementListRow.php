@@ -1,8 +1,9 @@
 <?php
-
 use yii\helpers\Html;
 use dvizh\cart\widgets\ChangeCount;
 use dvizh\cart\widgets\DeleteButton;
+use dvizh\cart\widgets\ElementPrice;
+use dvizh\cart\widgets\ElementCost;
 
 ?>
 <li class="dvizh-cart-row ">
@@ -29,14 +30,15 @@ use dvizh\cart\widgets\DeleteButton;
             } ?>
         </div>
         <div class="col-xs-3">
-            <span class="cart-item-cost">
-                <?= $cost ?>
-            </span>
+            <?= ElementPrice::widget(['model' => $model]); ?>
+
             <?= ChangeCount::widget([
                 'model' => $model,
                 'showArrows' => $showCountArrows,
                 'actionUpdateUrl' => $controllerActions['update'],
             ]); ?>
+
+            <?= ElementCost::widget(['model' => $model]); ?>
         </div>
 
         <?= Html::tag('div', DeleteButton::widget([

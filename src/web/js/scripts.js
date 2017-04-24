@@ -27,7 +27,7 @@ dvizh.cart = {
             cartElementCount = jQuery(self).val();
 
             dvizh.cart.changeElementCount(cartElementId, cartElementCount, url);
-
+            dvizh.cart.changeElementCost(cartElementId, cartElementCount, url);
         });
 
         jQuery(document).on('click', buyElementButton, function () {
@@ -167,6 +167,10 @@ dvizh.cart = {
         jQuery(buyButton).attr('data-count', jQuery(this).val());
 
         return true;
+    },
+    changeElementCost: function(cartElementId, cartElementCount) {
+        var newCost = jQuery('.dvizh-cart-element-price'+cartElementId).html() * cartElementCount;
+        jQuery('.dvizh-cart-element-cost'+cartElementId).html(newCost);
     },
     changeElementCount: function (cartElementId, cartElementCount, url) {
 
