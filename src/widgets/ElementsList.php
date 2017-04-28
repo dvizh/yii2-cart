@@ -154,46 +154,6 @@ class ElementsList extends \yii\base\Widget
             'otherFields' => $this->otherFields,
             'controllerActions' => $this->controllerActions,
         ]);
-
-        // TODO выпилить
-        /*
-        $columns = [];
-
-        if($this->showOptions && $item->getOptions()) {
-            $options = '';
-            foreach($item->getOptions() as $optionId => $valueId) {
-                if($optionData = $allOptions[$optionId]) {
-                    $option = $optionData['name'];
-
-                    $value = $optionData['variants'][$valueId];
-
-                    $options .= Html::tag('div', Html::tag('strong', $option) . ':' . $value);
-                }
-            }
-
-            $cartElName .= Html::tag('div', $options, ['class' => 'dvizh-cart-show-options']);
-        }
-
-        if(!empty($this->otherFields)) {
-            foreach($this->otherFields as $fieldName => $field) {
-                $cartElName .= Html::tag('p', Html::tag('small', $fieldName.': '.$product->$field));
-            }
-        }
-
-        if($this->columns == 4) {
-            $columns[] = Html::tag('div', $cartElName, ['class' => 'col-lg-6 col-md-6 col-xs-6']);
-            $columns[] = Html::tag('div', ChangeCount::widget(['model' => $item, 'showArrows' => $this->showCountArrows]), ['class' => 'col-lg-3 col-xs-3']);
-            $columns[] = Html::tag('div', $this->_getCostFormatted($item->getCost(false)), ['class' => 'col-lg-2 col-xs-2']);
-        } else {
-            $columns[] = Html::tag('div', $cartElName, ['class' => 'col-lg-8 col-md-8 col-xs-8']);
-            $columns[] = Html::tag('div', $this->_getCostFormatted($item->getCost(false)).ChangeCount::widget(['model' => $item, 'showArrows' => $this->showCountArrows]), ['class' => 'col-lg-3 col-md-3 col-xs-3']);
-        }
-
-        $columns[] = Html::tag('div', DeleteButton::widget(['model' => $item, 'lineSelector' => 'dvizh-cart-row ', 'cssClass' => 'delete']), ['class' => 'shop-cart-delete col-lg-1 col-md-1 col-xs-1']);
-
-        $return = html::tag('div', implode('', $columns), ['class' => ' row']);
-        return Html::tag('li', $return, ['class' => 'dvizh-cart-row ']);
-        */
     }
 
     private function _getCostFormatted($cost)

@@ -38,7 +38,7 @@ use dvizh\cart\widgets\ElementCost;
                 'actionUpdateUrl' => $controllerActions['update'],
             ]); ?>
 
-            <?= ElementCost::widget(['model' => $model]); ?>
+            <?php//= ElementCost::widget(['model' => $model]); ?>
         </div>
 
         <?= Html::tag('div', DeleteButton::widget([
