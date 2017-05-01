@@ -14,6 +14,7 @@ class ChangeCount extends \yii\base\Widget
     public $defaultValue = 1;
     public $showArrows = true;
     public $actionUpdateUrl = '/cart/element/update';
+    public $customView = false; // for example '@frontend/views/custom/changeCountLayout'
 
     public function init()
     {
@@ -50,6 +51,13 @@ class ChangeCount extends \yii\base\Widget
             ]);
         }
         
-        return Html::tag('div', $downArr.$input.$upArr, ['class' => $this->cssClass]);
+        if ($this->customView) {
+            return $this->render($this->customView, [
+                'model' => $this->model,
+                'defaultValue' => $this->defaultValue,
+            ]);
+        } else {
+            return Html::tag('div', $downArr.$input.$upArr, ['class' => $this->cssClass]);
+        }
     }
 }
