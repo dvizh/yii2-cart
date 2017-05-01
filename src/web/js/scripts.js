@@ -251,4 +251,7 @@ dvizh.cart = {
     },
 };
 
-dvizh.cart.init();
+$(function() {
+    dvizh.cart.init();
+});
+
