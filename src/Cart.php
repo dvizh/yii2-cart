@@ -72,7 +72,6 @@ class Cart extends Component
             $elementModel->countIncrement($count);
         }
 
-
         // TODO DRY
         $this->update();
         $elementEvent = new CartEvent([

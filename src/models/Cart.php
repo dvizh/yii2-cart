@@ -75,6 +75,7 @@ class Cart extends \yii\db\ActiveRecord implements CartInterface
     {
         return [
             [['created_time', 'user_id'], 'required', 'on' => 'create'],
+            [['tmp_user_id'], 'string'],
             [['updated_time', 'created_time'], 'integer'],
         ];
     }
@@ -84,6 +85,7 @@ class Cart extends \yii\db\ActiveRecord implements CartInterface
         return [
             'id' => yii::t('cart', 'ID'),
             'user_id' => yii::t('cart', 'User ID'),
+            'tmp_user_id' => yii::t('cart', 'Tmp user ID'),
             'created_time' => yii::t('cart', 'Created Time'),
             'updated_time' => yii::t('cart', 'Updated Time'),
         ];
