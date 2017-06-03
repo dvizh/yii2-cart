@@ -128,7 +128,7 @@ dvizh.cart = {
         jQuery(buyButton).data('options', options);
         jQuery(buyButton).attr('data-options', options);
 
-        jQuery(document).trigger("beforeChangeCartElementOptions", options);
+        jQuery(document).trigger("beforeChangeCartElementOptions", id);
 
         return true;
     },
