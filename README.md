@@ -14,10 +14,10 @@ Yii2-cart
 php composer require dvizh/yii2-cart "*"
 ```
 
-Или добавить в composer.json
+Или добавить в секцию require composer.json
 
 ```
-"dvizh/yii2-cart": "*",
+"dvizh/yii2-cart": "@dev",
 ```
 
 И выполнить
