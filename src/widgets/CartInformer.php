@@ -12,7 +12,7 @@ class CartInformer extends \yii\base\Widget
     public $offerUrl = NULL;
     public $cssClass = NULL;
     public $htmlTag = 'span';
-	public $showOldPrice = true;
+    public $showOldPrice = true;
 
     public function init()
     {
