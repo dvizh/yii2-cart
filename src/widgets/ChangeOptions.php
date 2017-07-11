@@ -51,8 +51,10 @@ class ChangeOptions extends \yii\base\Widget
                 $cssClass = "{$changerCssClass} dvizh-cart-option{$id} ";
 
                 $optionsArray = ['' => $optionData['name']];
-                foreach ($optionData['variants'] as $variantId => $value) {
-                    $optionsArray[$variantId] = $value;
+                if (isset($optionData['variants'])) {
+                    foreach ($optionData['variants'] as $variantId => $value) {
+                        $optionsArray[$variantId] = $value;
+                    }
                 }
 
                 if ($this->type == 'select') {
