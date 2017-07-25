@@ -22,7 +22,8 @@ class Cart extends Component
     const EVENT_ELEMENT_PRICE = 'element_price';
     const EVENT_ELEMENT_ROUNDING = 'element_rounding';
     const EVENT_ELEMENT_COST_CALCULATE = 'element_cost_calculate';
-
+    const EVENT_ELEMENT_BEFORE_DELETE = 'element_before_delete';
+    
     private $cost = 0;
     private $element = null;
     private $cart = null;
@@ -219,6 +220,11 @@ class Cart extends Component
 
     public function deleteElement($element)
     {
+        $eventBeforeDelete = new CartElementEvent([
+            'element' => $element,
+        ]);
+        $this->trigger(self::EVENT_ELEMENT_BEFORE_DELETE, $eventBeforeDelete);
+        
         if ($element->delete()) {
 
             // TODO DRY
