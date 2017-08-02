@@ -226,6 +226,7 @@ dvizh.cart = {
                 }
                 else {
                     dvizh.cart.renderCart(json);
+                    $(document).trigger('dvizhCartChanged');
                 }
 
             }, "json");
