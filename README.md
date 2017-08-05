@@ -11,7 +11,7 @@ Yii2-cart
 Выполнить команду
 
 ```
-php composer require dvizh/yii2-cart "*"
+php composer require dvizh/yii2-cart "@dev"
 ```
 
 Или добавить в секцию require composer.json
