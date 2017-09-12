@@ -27,7 +27,7 @@ class DeleteButton extends \yii\base\Widget
 
     public function run()
     {
-        return Html::a(Html::encode($this->text), [$this->deleteElementUrl],
+        return Html::a($this->text, [$this->deleteElementUrl],
             [
                 'data-url' => Url::toRoute($this->deleteElementUrl),
                 'data-role' => 'cart-delete-button',
