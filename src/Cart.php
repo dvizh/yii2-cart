@@ -23,7 +23,7 @@ class Cart extends Component
     const EVENT_ELEMENT_ROUNDING = 'element_rounding';
     const EVENT_ELEMENT_COST_CALCULATE = 'element_cost_calculate';
     const EVENT_ELEMENT_BEFORE_DELETE = 'element_before_delete';
-    
+
     private $cost = 0;
     private $element = null;
     private $cart = null;
@@ -49,7 +49,7 @@ class Cart extends Component
         return $this;
     }
 
-    public function put(\dvizh\cart\interfaces\CartElement $model, $count = 1, $options = [])
+    public function put(\dvizh\cart\interfaces\CartElement $model, $count = 1, $options = [], $comment = null)
     {
         if (!$elementModel = $this->cart->getElement($model, $options)) {
             $elementModel = new $this->element;
@@ -58,6 +58,7 @@ class Cart extends Component
             $elementModel->setItemId($model->getCartId());
             $elementModel->setModel(get_class($model));
             $elementModel->setOptions($options);
+            $elementModel->setComment($comment);
 
             $elementEvent = new CartElementEvent(['element' => $elementModel]);
             $this->trigger(self::EVENT_CART_PUT, $elementEvent);
@@ -85,7 +86,7 @@ class Cart extends Component
         return $elementModel;
     }
 
-    public function putWithPrice(\dvizh\cart\interfaces\CartElement $model, $price = 0, $count = 1, $options = [])
+    public function putWithPrice(\dvizh\cart\interfaces\CartElement $model, $price = 0, $count = 1, $options = [], $comment = null)
     {
         if (!$elementModel = $this->cart->getElement($model, $options)) {
             $elementModel = $this->element;
@@ -94,6 +95,7 @@ class Cart extends Component
             $elementModel->setItemId($model->getCartId());
             $elementModel->setModel(get_class($model));
             $elementModel->setOptions($options);
+            $elementModel->setComment($comment);
 
             $elementEvent = new CartElementEvent(['element' => $elementModel]);
             $this->trigger(self::EVENT_CART_PUT, $elementEvent);
@@ -224,7 +226,7 @@ class Cart extends Component
             'element' => $element,
         ]);
         $this->trigger(self::EVENT_ELEMENT_BEFORE_DELETE, $eventBeforeDelete);
-        
+
         if ($element->delete()) {
 
             // TODO DRY

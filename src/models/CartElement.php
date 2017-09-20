@@ -26,10 +26,15 @@ class CartElement extends \yii\db\ActiveRecord implements Element
     {
         return $this->getModel()->getCartName();
     }
-    
+
     public function getItemId()
     {
         return $this->item_id;
+    }
+
+    public function getComment()
+    {
+        return $this->comment;
     }
 
     public function getModel($withCartElementModel = true)
@@ -53,7 +58,7 @@ class CartElement extends \yii\db\ActiveRecord implements Element
 
         return $model;
     }
-    
+
     public function getModelName()
     {
         return $this->model;
@@ -140,6 +145,11 @@ class CartElement extends \yii\db\ActiveRecord implements Element
         }
     }
 
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+    }
+
     public static function tableName()
     {
         return '{{%cart_element}}';
@@ -150,7 +160,7 @@ class CartElement extends \yii\db\ActiveRecord implements Element
         $cost = 0;
         $costProduct = $this->getPrice($withTriggers);
         $cart = \Yii::$app->cart;
-        
+
         for($i = 0; $i < $this->count; $i++) {
             $currentCostProduct = $costProduct;
             if($withTriggers) {
@@ -160,13 +170,13 @@ class CartElement extends \yii\db\ActiveRecord implements Element
             }
             $cost = $cost+$currentCostProduct;
         }
-        
+
         if($withTriggers) {
             $elementEvent = new CartElementEvent(['element' => $this, 'cost' => $cost]);
             $cart->trigger($cart::EVENT_ELEMENT_COST, $elementEvent);
             $cost = $elementEvent->cost;
         }
-	    
+
         return $cost;
     }
 
@@ -180,7 +190,7 @@ class CartElement extends \yii\db\ActiveRecord implements Element
         return [
             [['cart_id', 'model', 'item_id'], 'required'],
             [['model'], 'validateModel'],
-            [['hash', 'options'], 'string'],
+            [['hash', 'options', 'comment'], 'string'],
             [['price'], 'double'],
             [['item_id', 'count', 'parent_id'], 'integer'],
         ];
@@ -210,6 +220,7 @@ class CartElement extends \yii\db\ActiveRecord implements Element
             'cart_id' => yii::t('cart', 'Cart ID'),
             'item_id' => yii::t('cart', 'Item ID'),
             'count' => yii::t('cart', 'Count'),
+            'comment' => yii::t('cart', 'Comment'),
         ];
     }
 
