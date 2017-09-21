@@ -145,9 +145,13 @@ class CartElement extends \yii\db\ActiveRecord implements Element
         }
     }
 
-    public function setComment($comment)
+    public function setComment($comment, $andSave = false)
     {
         $this->comment = $comment;
+
+        if($andSave) {
+            $this->save();
+        }
     }
 
     public static function tableName()
