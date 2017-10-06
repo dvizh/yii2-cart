@@ -21,7 +21,7 @@ class Cart extends \yii\db\ActiveRecord implements CartInterface
     
     public function put(\dvizh\cart\interfaces\Element $elementModel)
     {
-        $elementModel->hash = self::_generateHash($elementModel->model, $elementModel->price, $elementModel->getOptions());
+        $elementModel->hash = self::_generateHash($elementModel->model, $elementModel->price, $elementModel->options);
 
         $elementModel->link('cart', $this->my());
 
