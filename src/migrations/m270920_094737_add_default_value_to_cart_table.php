@@ -13,7 +13,7 @@ class m270920_094737_add_default_value_to_cart_table extends Migration
     public function safeUp()
     {
         $this->alterColumn('{{%cart}}', 'user_id', $this->string(55)->defaultValue(''));
-
+        $this->alterColumn('{{%cart_element}}', 'parent_id', $this->integer(55)->defaultValue(0));
     }
 
     /**
@@ -22,6 +22,7 @@ class m270920_094737_add_default_value_to_cart_table extends Migration
     public function safeDown()
     {
         $this->alterColumn('{{%cart}}', 'user_id', $this->string(55)->null());
+        $this->alterColumn('{{%cart_element}}', 'parent_id', $this->integer(55));
     }
 
     /*
