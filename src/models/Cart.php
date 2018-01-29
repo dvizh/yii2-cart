@@ -37,9 +37,10 @@ class Cart extends \yii\db\ActiveRecord implements CartInterface
         return $this->hasMany($this->element, ['cart_id' => 'id']);
     }
     
-    public function getElement(\dvizh\cart\interfaces\CartElement $model, $options = [])
+    public function getElement(\dvizh\cart\interfaces\CartElement $model, $options = [], $price = null)
     {
-        return $this->getElements()->where(['hash' => $this->_generateHash(get_class($model), $model->getCartPrice(), $options), 'item_id' => $model->getCartId()])->one();
+        $price = empty($price) ? $model->getCartPrice() : $price;
+        return $this->getElements()->where(['hash' => $this->_generateHash(get_class($model), $price, $options), 'item_id' => $model->getCartId()])->one();
     }
     
     public function getElementsByModel(\dvizh\cart\interfaces\CartElement $model)
