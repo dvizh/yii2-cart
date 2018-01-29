@@ -88,7 +88,7 @@ class Cart extends Component
 
     public function putWithPrice(\dvizh\cart\interfaces\CartElement $model, $price = 0, $count = 1, $options = [], $comment = null)
     {
-        if (!$elementModel = $this->cart->getElement($model, $options)) {
+        if (!$elementModel = $this->cart->getElement($model, $options, $price)) {
             $elementModel = $this->element;
             $elementModel->setCount((int)$count);
             $elementModel->setPrice($price);
